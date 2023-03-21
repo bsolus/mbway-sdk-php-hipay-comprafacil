@@ -12,7 +12,11 @@ class HipayMbway_Autoloader {
         'MbwayRequestDetailsResponse.php',
         'MbwayRequestTransactionResponse.php',
         'MbwayPaymentDetailsResult.php',
-        'MbwayRequestRefund.php'
+        'MbwayRefundDetailsResult.php',
+        'MbwayRequestRefund.php',
+        'MbwayRequestRefundResponse.php',
+        'MbwayRequestRefundDetails.php',
+        'MbwayRequestRefundDetailsResponse.php'
     );
 
     /**

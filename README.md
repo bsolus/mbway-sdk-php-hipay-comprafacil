@@ -1,4 +1,4 @@
-# HiPay MB WAY SDK PHP
+# HiPay Professional MB WAY SDK PHP
 
 ### Create a transaction
 
@@ -167,4 +167,115 @@
         case "vp2":
             print "MB WAY payment cancelled transaction $transactionId." . PHP_EOL;
             break;
+    }
+
+
+### Request a full or partial refund
+
+    use HipayMbway\MbwayClient;
+    use HipayMbway\MbwayRequestRefund;
+    use HipayMbway\MbwayRequestResponse;
+    use HipayMbway\MbwayRequestRefundResponse;
+
+    /*
+     * Account config
+     * $sandbox false if account is a production account
+     * $entity, $username, $password and $category are provided by customer management 
+     */
+    
+    $sandbox = true;
+    $entity = 11249;
+    $username = "hpXXXXXX";
+    $password = "xxxxxxxx";
+    
+    /*
+     * Operation parameter
+     * $transactionId is the id returned on the transaction creation 
+     */
+    
+    $transactionId = 'XXXXXXXXXXXXXXXXX';
+    $refundAmount = 0.22;
+
+    /*
+     * Operation  
+     */
+
+    $mbway = new MbwayClient($sandbox);
+    $mbwayRequestRefund = new MbwayRequestRefund($username, $password, $transactionId, $refundAmount, $entity);
+    $mbwayRequestRefundResult = new MbwayRequestRefundResponse($mbway->requestRefund($mbwayRequestRefund)->RequestRefundResult);
+
+    /*
+    * Check Operation result  
+    */
+    if ($mbwayRequestRefundResult->get_ErrorCode() <> 0 || !$mbwayRequestRefundResult->get_Success()) {
+        
+        //Refund not allowed
+        //The time elapsed since payment is insufficient.
+        //The request has already been made.
+        
+        print "Unable to requested a refund for transaction $transactionId with amount $refundAmount Euros. Operation returned: " . $mbwayRequestRefundResult->get_ErrorDescription() . PHP_EOL;
+
+    } else {
+
+        print "MB WAY refund requested for transaction $transactionId with amount $refundAmount." . PHP_EOL;
+    }
+
+
+### Check refund status
+
+    use HipayMbway\MbwayClient;
+    use HipayMbway\MbwayRequestRefundDetails;
+    use HipayMbway\MbwayRequestResponse;
+    use HipayMbway\MbwayRequestRefundDetailsResponse;
+    use HipayMbway\MbwayRefundDetailsResult;
+
+    /*
+     * Account config
+     * $sandbox false if account is a production account
+     * $entity, $username, $password and $category are provided by customer management 
+     */
+    
+    $sandbox = true;
+    $entity = 11249;
+    $username = "hpXXXXXX";
+    $password = "xxxxxxxx";
+    
+    /*
+     * Operation parameter
+     * $transactionId is the id returned on the transaction creation 
+     */
+    
+    $transactionId = 'XXXXXXXXXXXXXXXXX';
+
+    /*
+     * Operation  
+     */
+
+    $mbway = new MbwayClient($sandbox);
+    $mbwayRequestRefundDetails = new MbwayRequestRefundDetails($username, $password, $transactionId, $entity);
+    $mbwayRequestRefundDetaisResult = new MbwayRequestRefundDetailsResponse($mbway->getRequestRefundDetails($mbwayRequestRefundDetails)->GetRequestRefundDetailsResult);
+
+    /*
+    * Check Operation result  
+    */
+    if ($mbwayRequestRefundDetaisResult->get_ErrorCode() <> 0 || !$mbwayRequestRefundDetaisResult->get_Success()) {
+
+        //Item not found
+        print "Unable to get refund status for transaction $transactionId. Operation returned: " . $mbwayRequestRefundDetaisResult->get_ErrorDescription() . PHP_EOL;
+
+    } else {
+        $refundDetails = $mbwayRequestRefundDetaisResult->get_RefundDetails();
+        // New | Success | Unsuccess
+        $status = $refundDetails->get_Status();
+        switch($status) {
+            case $refundDetails::REFUND_STATUS_NEW:
+                print "MB WAY refund for transaction $transactionId is pending" . PHP_EOL;
+                break;
+            case $refundDetails::REFUND_STATUS_SUCCESS:
+                print "MB WAY refund for transaction $transactionId was successful" . PHP_EOL;
+                break;      
+            case $refundDetails::REFUND_STATUS_UNSUCCESS:
+                print "MB WAY refund for transaction $transactionId is unsuccessful" . PHP_EOL;
+                break;
+        }
     }
