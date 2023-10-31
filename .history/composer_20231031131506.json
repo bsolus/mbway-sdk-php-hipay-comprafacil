@@ -1,0 +1,19 @@
+{
+    "name": "bsolus/mbway-sdk-php-hipay-comprafacil",
+    "description": "HiPay Professional MB WAY SDK PHP",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Bsolus\\MbwaySdkPhpHipayComprafacil\\": "lib/HipayMbway"
+        }
+    },
+    "authors": [
+        {
+            "name": "Miguel Vieira",
+            "email": "mvieira@bsolus.pt"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
